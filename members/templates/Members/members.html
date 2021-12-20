@@ -1,0 +1,29 @@
+{% extends 'Members/base.html'%}
+
+{% block content %}
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">First Name</th>
+      <th scope="col">Last  Name</th>
+      <th scope="col">Email</th>
+      <th scope="col">Phone</th>
+      <th scope="col">Address</th>
+    </tr>
+  </thead>
+  <tbody>
+      {% for member in Members %}
+    <tr>
+      <td>{{ member.first_name}}</td>
+      <td>{{ member.last_name}}</td>
+      <td>{{ member.email}}</td>
+      <td>{{ member.phone_number}}</td>
+      <td>{{ member.home_address}}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+
+{% endblock content %}
