@@ -1,0 +1,34 @@
+{% extends 'non_members/base.html'%}
+
+{% block content %}
+
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">First Name</th>
+      <th scope="col">Last  Name</th>
+      <th scope="col">Loan Amount</th>
+      <th scope="col">Borrow Date</th>
+      <th scope="col">Amount Repaid</th>
+      <th scope="col">Balance</th>
+    </tr>
+  </thead>
+  <tbody>
+      {% for member in MembersActiveLoans %}
+    <tr>
+      <td>{{ member.0 }}</td>
+      <td>{{ member.1}}</td>
+      <td>{{ member.2}}</td>
+      <td>{{ member.5|date:"F d, Y"}}</td>
+      <td>{{ member.3}}</td>
+      <td>{{ member.4}}</td>
+
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+
+
+{% endblock content %}

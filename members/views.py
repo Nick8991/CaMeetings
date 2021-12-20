@@ -89,4 +89,4 @@ def MembersPaidLoans(request):
 	context = {
 	'MembersActiveLoans' : results
 	}
-	return render(request, 'Members/activeloans.html', context)
+	return render(request, 'Members/paidloans.html', context)

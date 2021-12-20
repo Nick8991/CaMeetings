@@ -46,7 +46,7 @@ class Outsider_Loan(models.Model):
     date_reviewed = models.DateTimeField(default=timezone.now)
     request_status = models.BooleanField(default=False)
     loan_amount = models.PositiveBigIntegerField()
-    Outsider_Request = models.ForeignKey(Outsider_Request, on_delete=models.CASCADE)
+    outsider_request = models.ForeignKey(Outsider_Request, on_delete=models.CASCADE)
 
 
 class Outsider_Repayment(models.Model):
