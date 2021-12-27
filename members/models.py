@@ -13,8 +13,6 @@ class Members(models.Model):
     spouse_last_name = models.CharField(max_length=30)
     spouse_number = models.CharField(max_length=30)
     home_address = models.CharField(max_length=100)
-    is_member = models.BooleanField()
-    share_value = models.PositiveIntegerField()
 
     def __str__(self):
         fullname = self.first_name.title() + ' '+ self.last_name.title()
@@ -35,7 +33,6 @@ class Member_Request(models.Model):
 
 class Member_Loan(models.Model):
     date_reviewed = models.DateTimeField(default=timezone.now)
-    request_status = models.BooleanField(default=False)
     loan_amount = models.PositiveBigIntegerField()
     member_request = models.ForeignKey(Member_Request, on_delete=models.CASCADE, default=None)
 
@@ -60,8 +57,9 @@ class Member_Repayment(models.Model):
         return b
 
 class Unpaid(models.Model):
-    member_repayment = models.OneToOneField(Member_Repayment, on_delete=models.CASCADE, primary_key=True)
-    balance = models.PositiveBigIntegerField(blank=True)
+    balance = models.BigIntegerField(blank=True)
+    member_loan = models.OneToOneField(Member_Loan, on_delete=models.CASCADE,primary_key=True)
+
 
     def __str__(self):
         a = self.balance

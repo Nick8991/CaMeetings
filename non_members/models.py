@@ -14,16 +14,15 @@ class Outsider(models.Model):
     spouse_last_name = models.CharField(max_length=30)
     spouse_number = models.CharField(max_length=30)
     home_address = models.CharField(max_length=100)
-    is_member = models.BooleanField()
     sponsor = models.ForeignKey(Members, on_delete=models.CASCADE)
 
     class Meta:
-        unique_together = ('id', 'sponsor')
+        unique_together = (("id","sponsor"),)
 
 
 
     def __str__(self):
-        fullname = self.first_name.title() +' '+self.Last_name.title()
+        fullname = self.first_name.title() +' '+self.last_name.title()
         return fullname
 
 
@@ -44,9 +43,16 @@ class Outsider_Request(models.Model):
 
 class Outsider_Loan(models.Model):
     date_reviewed = models.DateTimeField(default=timezone.now)
-    request_status = models.BooleanField(default=False)
     loan_amount = models.PositiveBigIntegerField()
     outsider_request = models.ForeignKey(Outsider_Request, on_delete=models.CASCADE)
+
+    def __str__(self):
+        a = self.outsider_request
+        a1 = str(a)
+        b = self.loan_amount
+        b1 = str(b)
+        c = a1 + ' got '+ b1
+        return c
 
 
 class Outsider_Repayment(models.Model):
@@ -54,9 +60,13 @@ class Outsider_Repayment(models.Model):
     amount_repaid = models.PositiveBigIntegerField()
     date_repaid = models.DateTimeField(default=timezone.now)
 
+    def __str__(self):
+        a = self.loan
+        return str(a)
+
 
 class Unpaid(models.Model):
-    repayment = models.OneToOneField(Outsider_Repayment, on_delete=models.CASCADE,primary_key=True)
+    member_loan = models.OneToOneField(Outsider_Loan, on_delete=models.CASCADE,primary_key=True)
     balance = models.PositiveBigIntegerField(blank=True)
 
     def __str__(self):
