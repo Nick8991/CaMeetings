@@ -17,7 +17,7 @@ class Outsider(models.Model):
     sponsor = models.ForeignKey(Members, on_delete=models.CASCADE)
 
     class Meta:
-        unique_together = ('first_name','username',)
+        unique_together = ('first_name','username','email')
 
 
 

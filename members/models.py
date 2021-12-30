@@ -15,7 +15,7 @@ class Members(models.Model):
     home_address = models.CharField(max_length=100)
 
     class Meta:
-        unique_together = ('first_name','username',)
+        unique_together = ('first_name','username','email',)
 
     def __str__(self):
         fullname = self.first_name.title() + ' '+ self.last_name.title()
