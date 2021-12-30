@@ -57,10 +57,6 @@ class Member_Repayment(models.Model):
         return b
 
 class Unpaid(models.Model):
-    balance = models.BigIntegerField(blank=True)
-    member_loan = models.OneToOneField(Member_Loan, on_delete=models.CASCADE,primary_key=True)
-
-
-    def __str__(self):
-        a = self.balance
-        return str(a)
+    loan = models.OneToOneField(Member_Loan, on_delete=models.CASCADE,primary_key=True)
+    interest = models.PositiveBigIntegerField()
+    lb_balance = models.PositiveBigIntegerField()

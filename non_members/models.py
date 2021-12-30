@@ -66,9 +66,6 @@ class Outsider_Repayment(models.Model):
 
 
 class Unpaid(models.Model):
-    member_loan = models.OneToOneField(Outsider_Loan, on_delete=models.CASCADE,primary_key=True)
-    balance = models.PositiveBigIntegerField(blank=True)
-
-    def __str__(self):
-        a = str(balance)
-        return a
+    loan = models.OneToOneField(Outsider_Loan, on_delete=models.CASCADE,primary_key=True)
+    interest = models.PositiveBigIntegerField()
+    lb_balance = models.PositiveBigIntegerField()

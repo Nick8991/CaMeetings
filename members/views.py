@@ -2,10 +2,29 @@ from django.shortcuts import render
 from django.db import connection
 from .models import Members
 
+cursor = connection.cursor()
+
+def default_balance():
+	cursor.execute('''SELECT mmml.id, loan_amount
+		FROM members_member_loan mml
+		ORDER BY 1 DESC
+		''')
+	loans = cursor.fetchall()
+	my_loans = {}
+	for loan in loans:
+		my_loans['loan_id'] = loan[0]
+		my_loans['loan_capital'] = loan[1]
+		cursor.execute('''INSERT INTO members_member_loan
+			(loan_id,interest,lb_balance)
+			values (%s,%s,%s) ON CONFLICT (loan_id) 
+			DO NOTHING
+			''',[my_loans['loan_id'],0,my_loans['loan_capital']])
+
+
+
 
 
 def InsertToDB():
-	cursor = connection.cursor()
 	cursor.execute('''SELECT mml.id,
     (CURRENT_DATE::Date - date_reviewed::Date ) AS numberOfdays,
     SUM(amount_repaid) as pd,
