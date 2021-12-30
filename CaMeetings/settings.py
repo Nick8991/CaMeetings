@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'CaMeetings.wsgi.application'
 DATABASES={
    'default':{
       'ENGINE':'django.db.backends.postgresql_psycopg2',
-      'NAME':'BuntaCa',
+      'NAME':'BuntaCa4',
       'USER':'postgres',
       'PASSWORD':'monoel',
       'HOST':'localhost',

@@ -14,6 +14,9 @@ class Members(models.Model):
     spouse_number = models.CharField(max_length=30)
     home_address = models.CharField(max_length=100)
 
+    class Meta:
+        unique_together = ('first_name','username',)
+
     def __str__(self):
         fullname = self.first_name.title() + ' '+ self.last_name.title()
         return fullname.title()
@@ -58,5 +61,4 @@ class Member_Repayment(models.Model):
 
 class Unpaid(models.Model):
     loan = models.OneToOneField(Member_Loan, on_delete=models.CASCADE,primary_key=True)
-    interest = models.PositiveBigIntegerField()
-    lb_balance = models.PositiveBigIntegerField()
+    lb_balance = models.BigIntegerField()

@@ -17,7 +17,7 @@ class Outsider(models.Model):
     sponsor = models.ForeignKey(Members, on_delete=models.CASCADE)
 
     class Meta:
-        unique_together = (("id","sponsor"),)
+        unique_together = ('first_name','username',)
 
 
 
@@ -67,5 +67,4 @@ class Outsider_Repayment(models.Model):
 
 class Unpaid(models.Model):
     loan = models.OneToOneField(Outsider_Loan, on_delete=models.CASCADE,primary_key=True)
-    interest = models.PositiveBigIntegerField()
-    lb_balance = models.PositiveBigIntegerField()
+    lb_balance = models.BigIntegerField()
