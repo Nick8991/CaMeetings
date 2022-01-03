@@ -11,7 +11,11 @@
       <th scope="col">Loan Amount</th>
       <th scope="col">Borrow Date</th>
       <th scope="col">Amount Repaid</th>
-      <th scope="col">Balance</th>
+      <th scope="col">paid Interest</th>
+      <th scope="col">Unpaid Interest</th>
+      <th scope="col">Owing</th>
+
+
     </tr>
   </thead>
   <tbody>
@@ -22,7 +26,10 @@
       <td>{{ member.2}}</td>
       <td>{{ member.5|date:"F d, Y"}}</td>
       <td>{{ member.3}}</td>
+      <td>{{ member.7}}</td>
+      <td>{{ member.6}}</td>
       <td>{{ member.4}}</td>
+      
 
     </tr>
     {% endfor %}

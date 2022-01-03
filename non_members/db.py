@@ -8,7 +8,7 @@ def load_balance():
 	cursor.execute('''SELECT loan_amount,
 		(CURRENT_DATE::Date - date_reviewed::Date ) AS numberOfdays,
 		id
-		FROM members_member_loan
+		FROM non_members_outsider_loan
 
 		''')
 	loans = cursor.fetchall()
@@ -51,7 +51,7 @@ def load_balance():
 
 def cal_interest():
 	cursor.execute('''SELECT  DISTINCT loan_id
-		FROM members_member_repayment mmr''')
+		FROM non_members_outsider_repayment mmr''')
 	loans = cursor.fetchall()
 	for loan_ids in loans:
 		loan_id = loan_ids[0]
@@ -59,10 +59,10 @@ def cal_interest():
 		cursor.execute('''SELECT u_balance, amount_repaid, u_interest,
 		(CURRENT_DATE::Date - date_repaid::Date ) AS numberOfdays,
 		(CURRENT_DATE::Date - date_reviewed::Date) AS numberOfday,mmrep.id
-		FROM members_member_repayment mmrep
-		JOIN members_member_loan mml
+		FROM non_members_outsider_repayment mmrep
+		JOIN non_members_outsider_loan mml
 		ON mmrep.loan_id = mml.id
-		JOIN members_unpaid mup
+		JOIN non_members_unpaid mup
 		ON mml.id = mup.loan_id
 		WHERE mmrep.loan_id = %s AND u_balance > 0
 			''',[loan_id])
@@ -102,14 +102,14 @@ def cal_interest():
 					paid_interest = my_dict['repaid']
 					paid_balance = 0
 
-					cursor.execute(''' INSERT INTO members_repayment_distribution
+					cursor.execute(''' INSERT INTO non_members_repayment_distribution
 						(repayment_id,r_balance, r_interest, loan_id) values 
 						(%s,%s,%s,%s) ON CONFLICT (repayment_id)
 						DO UPDATE SET r_balance = EXCLUDED.r_balance,
 						r_interest = EXCLUDED.r_interest
 						''', [my_dict['repayment_id'],paid_balance,paid_interest,loan_id])
 
-					cursor.execute(''' INSERT INTO members_unpaid
+					cursor.execute(''' INSERT INTO non_members_unpaid
 						(loan_id,u_interest,u_balance) values
 						(%s,%s,%s) ON CONFLICT (loan_id) DO UPDATE
 						SET u_interest = EXCLUDED.u_interest,
@@ -124,7 +124,7 @@ def cal_interest():
 					paid_interest = new_interest
 					paid_balance = balance_left
 
-					cursor.execute(''' INSERT INTO members_repayment_distribution
+					cursor.execute(''' INSERT INTO non_members_repayment_distribution
 						(repayment_id,r_balance, r_interest, loan_id) values 
 						(%s,%s,%s,%s) ON CONFLICT (repayment_id)
 						DO UPDATE SET r_balance = EXCLUDED.r_balance,
@@ -132,7 +132,7 @@ def cal_interest():
 
 						''', [my_dict['repayment_id'],paid_balance,paid_interest,loan_id]) 
 
-					cursor.execute(''' INSERT INTO members_unpaid
+					cursor.execute(''' INSERT INTO non_members_unpaid
 						(loan_id,u_interest,u_balance) values
 						(%s,%s,%s) ON CONFLICT (loan_id) DO UPDATE
 						SET u_interest = EXCLUDED.u_interest,
@@ -150,7 +150,7 @@ def cal_interest():
 					paid_interest = my_dict['repaid']
 					paid_balance = 0
 
-					cursor.execute(''' INSERT INTO members_repayment_distribution
+					cursor.execute(''' INSERT INTO non_members_repayment_distribution
 						(repayment_id,r_balance, r_interest, loan_id) values 
 						(%s,%s,%s,%s) ON CONFLICT (repayment_id)
 						DO UPDATE SET r_balance = EXCLUDED.r_balance,
@@ -158,7 +158,7 @@ def cal_interest():
 						''', [my_dict['repayment_id'],paid_balance,paid_interest,loan_id])
 
 
-					cursor.execute(''' INSERT INTO members_unpaid
+					cursor.execute(''' INSERT INTO non_members_unpaid
 						(loan_id,u_interest,u_balance) values
 						(%s,%s,%s) ON CONFLICT (loan_id) DO UPDATE
 						SET u_interest = EXCLUDED.u_interest,
@@ -173,7 +173,7 @@ def cal_interest():
 					paid_interest = new_interest
 					paid_balance = balance_left
 
-					cursor.execute(''' INSERT INTO members_repayment_distribution
+					cursor.execute(''' INSERT INTO non_members_repayment_distribution
 						(repayment_id,r_balance, r_interest, loan_id) values 
 						(%s,%s,%s,%s) ON CONFLICT (repayment_id)
 						DO UPDATE SET r_balance = EXCLUDED.r_balance,
@@ -181,7 +181,7 @@ def cal_interest():
 
 						''', [my_dict['repayment_id'],paid_balance,paid_interest,loan_id]) 
 
-					cursor.execute(''' INSERT INTO members_unpaid
+					cursor.execute(''' INSERT INTO non_members_unpaid
 						(loan_id,u_interest,u_balance) values
 						(%s,%s,%s) ON CONFLICT (loan_id) DO UPDATE
 						SET u_interest = EXCLUDED.u_interest,
