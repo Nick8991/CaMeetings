@@ -1,34 +1,20 @@
 from django.shortcuts import render
 from django.db import connection
 from .models import Members
+from . import db
 
 cursor = connection.cursor()
 
-def default_balance():
-	cursor.execute('''SELECT mml.id, loan_amount
-		FROM members_member_loan mml
-		ORDER BY 1 DESC
-		''')
-	loans = cursor.fetchall()
-	my_loans = {}
-	for loan in loans:
-		my_loans['loan_id'] = loan[0]
-		my_loans['loan_capital'] = loan[1]
-		cursor.execute('''INSERT INTO members_unpaid
-			(loan_id,lb_balance)
-			values (%s,%s) ON CONFLICT (loan_id) 
-			DO NOTHING
-			''',[my_loans['loan_id'],my_loans['loan_capital']])
 
 
-
+db.load_balance()
 
 
 def InsertToDB():
 	cursor.execute('''SELECT mml.id,
     (CURRENT_DATE::Date - date_reviewed::Date ) AS numberOfdays,
     SUM(amount_repaid) as pd,
-    loan_amount,lb_balance
+    loan_amount,u_balance
     FROM members_member_repayment mmrep
     JOIN members_member_loan mml
     ON mml.id = mmrep.loan_id
@@ -38,7 +24,7 @@ def InsertToDB():
 	''')
 	balances = cursor.fetchall()
 	my_dict = {}
-	for result in balances:
+	for result in balances: 
 		my_dict['loan_id'] = result[0]
 		my_dict['days'] = result[1]
 		my_dict['total_repaid'] = result[2]
@@ -72,7 +58,7 @@ def InsertToDB():
 			''',[rep_id,total_debt])
 
 def index(request):
-	default_balance()
+	db.load_balance()
 	#InsertToDB()
 	member01 = Members.objects.all()
 	context = {
@@ -85,7 +71,7 @@ def MembersActiveLoans(request):
 	cursor = connection.cursor()
 	cursor.execute('''SELECT INITCAP( CONCAT(first_name,' ',last_name) ) full_name
 	,username,loan_amount, 
-	SUM(amount_repaid) AS total_paid,lb_balance,
+	SUM(amount_repaid) AS total_paid,u_balance,
 	date_reviewed
 	FROM members_members mm
 	JOIN members_member_request mmreq
@@ -97,7 +83,7 @@ def MembersActiveLoans(request):
 	JOIN members_unpaid mpd
 	ON mpd.loan_id = mml.id
 	GROUP BY 1,2,3,5,6
-	HAVING lb_balance >0
+	HAVING u_balance >0
 	''')
 	results = cursor.fetchall()
 

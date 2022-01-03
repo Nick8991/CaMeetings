@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-ibwz#wr_k9^o0m^bx#ol^)t7nswu_v!y-&^z3bnyuly@ir*x&x
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ""
 
 
 # Application definition
@@ -78,9 +78,9 @@ WSGI_APPLICATION = 'CaMeetings.wsgi.application'
 DATABASES={
    'default':{
       'ENGINE':'django.db.backends.postgresql_psycopg2',
-      'NAME':'BuntaCa4',
+      'NAME':'BuntaCa',
       'USER':'postgres',
-      'PASSWORD':'monoel',
+      'PASSWORD':'MONOEL',
       'HOST':'localhost',
       'PORT':'5432',
    }

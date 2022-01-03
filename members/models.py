@@ -59,6 +59,14 @@ class Member_Repayment(models.Model):
         b = str(a1)
         return b
 
+class Repayment_distribution(models.Model):
+    repayment = models.OneToOneField(Member_Repayment, on_delete=models.CASCADE,primary_key=True)
+    r_balance = models.BigIntegerField()
+    r_interest = models.PositiveBigIntegerField()
+    loan = models.ForeignKey(Member_Loan,on_delete=models.CASCADE)
+
+
 class Unpaid(models.Model):
-    loan = models.OneToOneField(Member_Loan, on_delete=models.CASCADE,primary_key=True)
-    lb_balance = models.BigIntegerField()
+    loan = models.OneToOneField(Member_Loan,on_delete=models.CASCADE,primary_key=True)
+    u_balance = models.PositiveBigIntegerField()
+    u_interest = models.PositiveBigIntegerField()
