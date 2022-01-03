@@ -3,6 +3,7 @@ from django.db import connection
 
 cursor = connection.cursor()
 
+# calculate default loan balance and interest for each loan in the db.
 def load_balance():
 	cursor.execute('''SELECT loan_amount,
 		(CURRENT_DATE::Date - date_reviewed::Date ) AS numberOfdays,
@@ -17,9 +18,11 @@ def load_balance():
 		my_loans['duration'] = loan[1]
 		my_loans['id'] = loan[2]
 
+		# calculate the duration of each loan base on monthly and daily counts
 		loan_month = my_loans['duration']//30
 		loan_day = (my_loans['duration']%30)/30
 
+		# loans with less than a two months duration have an interest rate of 2.5 percents.
 		if loan_month <= 2:
 			sub1 = ((loan_month*0.025) + (loan_day*0.025))/2
 			sub2 = (float(my_loans['loan_amount'])*sub1)
@@ -30,6 +33,8 @@ def load_balance():
 			SET u_balance = EXCLUDED.u_balance, u_interest = EXCLUDED.u_interest
 			''',[rep_id,my_loans['loan_amount'],sub2])
 
+			# loans with more than 2 months duration, pay a 2.5 percent for the first
+			# two months and then 10 percent after that.
 		elif loan_month > 2:
 			sub0 = 1 * 0.025
 			sub1 = ((loan_month-2)*0.1) + ((loan_day/30)*0.1)
@@ -53,7 +58,8 @@ def cal_interest():
 		loan_id = loan_ids[0]
 		cursor.execute('''SELECT u_balance, amount_repaid, u_interest,
 		CURRENT_DATE::Date - date_repaid::Date ) AS numberOfdays,
-		(CURRENT_DATE::Date - date_reviewed::Date ) AS numberOfday	
+		(CURRENT_DATE::Date - date_reviewed::Date ) AS numberOfday
+		WHERE loan_id = loan_id
 
 			''')
 		repayments = cursor.fetchall()
