@@ -9,6 +9,8 @@ db.load_balance()
 db.cal_interest()
 
 def index1(request):
+	db.load_balance()
+	db.cal_interest()
 	member01 = Outsider.objects.all()
 	context = {
 	'Members':member01
@@ -16,6 +18,8 @@ def index1(request):
 	return render(request,'non_members/outsider.html', context)
 
 def SeekersActiveLoans(request):
+	db.load_balance()
+	db.cal_interest()
 	cursor.execute('''SELECT INITCAP( CONCAT(first_name,' ',last_name) ) full_name, 
 	username,loan_amount, SUM(amount_repaid),u_balance,
 	date_reviewed,u_interest, SUM(r_interest)
@@ -42,6 +46,8 @@ def SeekersActiveLoans(request):
 
 
 def SeekersPaidLoansa(request):
+	db.load_balance()
+	db.cal_interest()
 	cursor.execute('''SELECT INITCAP( CONCAT(nmm.first_name,' ',nmm.last_name) ) full_name, 
 	nmm.username,loan_amount, SUM(amount_repaid),u_balance,
 	date_reviewed,SUM(r_interest),mm.username
