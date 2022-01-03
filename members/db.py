@@ -57,12 +57,91 @@ def cal_interest():
 	for loan_ids in loans:
 		loan_id = loan_ids[0]
 		cursor.execute('''SELECT u_balance, amount_repaid, u_interest,
-		CURRENT_DATE::Date - date_repaid::Date ) AS numberOfdays,
+		(CURRENT_DATE::Date - date_repaid::Date ) AS numberOfdays,
 		(CURRENT_DATE::Date - date_reviewed::Date ) AS numberOfday
-		WHERE loan_id = loan_id
-
-			''')
+		FROM members_member_repayment mmrep
+		JOIN members_member_loan mml
+		ON mmrep.loan_id = mml.id
+		JOIN members_unpaid mup
+		ON mml.id = mup.loan_id
+		WHERE mmrep.loan_id = %s
+			'''[loan_id])
 		repayments = cursor.fetchall()
 		my_dict = {}
-		
+		for rep in repayments:
+			cursor.execute('''SELECT u_balance, u_interest
+				FROM members_unpaid mup
+				WHERE mup.loan_id = %s
+				'''[loan_id])
+			loan_amt = cursor.fetchall()
+
+			#my_dict['balance'] = rep[0]
+			my_dict['repaid'] = rep[1]
+			#my_dict['interest'] = rep[2]
+			my_dict['days_repaid'] = rep[3]
+			my_dict['days_reviewed'] = rep[4]
+
+			for l in loan_amt:
+				my_dict['balance'] = l[0]
+				my_dict['interest'] = l[1]
+
+			repaid_months = my_dict['days_repaid']//30
+			repaid_days = (my_dict['days_repaid']%30)/30
+
+			#loan_days = (my_dict['days_reviewed']%30)/30
+			loan_month = my_dict['days_reviewed']//30
+
+			if (loan_month - repaid_months) <= 2:
+				sub1 = ((repaid_months*0.025) + (repaid_days*0.025))
+				new_interest = (float(my_dict['balance'])*sub1) + my_dict['interest']
+
+				if my_dict['repaid'] < new_interest:
+					latest_interest = new_interest - my_dict['repaid']
+
+					cursor.execute(''' INSERT INTO members_unpaid
+						(loan_id,u_interest,u_balance) values
+						(%s,%s,%s) ON CONFLICT (loan_id) DO
+						UPDATE u_interest = EXCLUDED.u_interest,
+						u_balance = EXCLUDED.u_balance
+						'''[loan_id, latest_interest, my_dict['balance']])
+
+				elif my_dict['repaid'] > new_interest:
+					balance_left = my_dict['repaid'] - new_interest
+					latest_interest = 0
+					new_balance = my_dict['balance'] - balance_left
+
+					cursor.execute(''' INSERT INTO members_unpaid
+						(loan_id,u_interest,u_balance) values
+						(%s,%s,%s) ON CONFLICT (loan_id) DO
+						UPDATE u_interest = EXCLUDED.u_interest,
+						u_balance = EXCLUDED.u_balance
+						'''[loan_id, latest_interest, new_balance])
+
+			elif (loan_month - repaid_months) > 2:
+				sub1 = ((repaid_months*0.1) + (repaid_days*0.1))
+				new_interest = (float(my_dict['balance'])*sub1) + my_dict['interest']
+
+				if my_dict['repaid'] < new_interest:
+					latest_interest = new_interest - my_dict['repaid']
+
+					cursor.execute(''' INSERT INTO members_unpaid
+						(loan_id,u_interest,u_balance) values
+						(%s,%s,%s) ON CONFLICT (loan_id) DO
+						UPDATE u_interest = EXCLUDED.u_interest,
+						u_balance = EXCLUDED.u_balance
+						'''[loan_id, latest_interest, my_dict['balance']])
+
+				elif my_dict['repaid'] > new_interest:
+					balance_left = my_dict['repaid'] - new_interest
+					latest_interest = 0
+					new_balance = my_dict['balance'] - balance_left
+
+					cursor.execute(''' INSERT INTO members_unpaid
+						(loan_id,u_interest,u_balance) values
+						(%s,%s,%s) ON CONFLICT (loan_id) DO
+						UPDATE u_interest = EXCLUDED.u_interest,
+						u_balance = EXCLUDED.u_balance
+						'''[loan_id, latest_interest, new_balance])
+
+
 
